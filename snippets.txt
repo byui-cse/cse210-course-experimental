@@ -1,0 +1,206 @@
+/// <summary>
+/// <para>
+/// A distinguishing quality or characteristic.
+/// </para>
+/// <para>
+/// The responsibility of Trait is to provide additional run-time type information for 
+/// inheriting classes. A class implements the Trait interface to indicate that Cast and Actor
+/// methods can legally operate on or use it.
+/// </para>
+/// <remarks>
+/// So-called marker interfaces like this one are often considered a code smell because they
+/// don't define any new behavior. However, they are sometimes very useful in rounding out, thus 
+/// strengthening, our understanding of the object model. We made the choice to include it here
+/// because our understanding of Actors would be weakened without it.
+/// </remarks>
+/// </summary>
+
+----------------------------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+
+
+namespace Unit99.Core.Casting
+{
+    /// <summary>
+    /// <para>
+    /// Something that receives Actor events.
+    /// </para>
+    /// <para>
+    /// The responsibility of IActorListener is to define the methods for responding to changes in 
+    /// an Actor instance.
+    /// </para>
+    /// </summary>
+    public interface IActorListener
+    {
+        /// <summary>
+        /// Invoked when a trait is added to an Actor instance.
+        /// </summary>
+        /// <param name="type">The type of trait that was added.</param>
+        void OnTraitAdded(Type type);
+
+        /// <summary>
+        /// Invoked when a trait is removed from an Actor instance.
+        /// </summary>
+        /// <param name="type">The type of trait that was removed.</param>
+        void OnTraitRemoved(Type type);
+    }
+}
+
+----------------------------------------------------------------------------------------------------
+
+/// <summary>
+/// Attaches the specified listener to actor.
+/// </summary>
+/// <param name="listener">The listener to notify when an event happens.</param>
+public void AttachListener(IActorListener listener)
+{
+    _listener = listener;
+}
+
+/// <summary>
+/// Detaches the actor's listener.
+/// </summary>
+public void DetachListener()
+{
+    _listener = null;
+}
+
+----------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+
+
+namespace Byui.Game.Casting
+{
+    /// <summary>
+    /// <para>
+    /// All of the actors in a scene.
+    /// </para>
+    /// <para>
+    /// The responsibility of Cast is to maintain a collection of actors in a scene.
+    /// </para>
+    /// </summary>
+    public class Cast : IActorListener
+    {
+        private Dictionary<Type, List<Actor>> _actors = new Dictionary<Type, List<Actor>>();
+
+        /// <summary>
+        /// Constructs a new instance of Cast.
+        /// </summary>
+        public Cast()
+        {
+        }
+
+        /// <summary>
+        /// Adds the specified actor to the Cast. 
+        /// </summary>
+        /// <param name="actor">The actor to add.</param>
+        public void Add(Actor actor)
+        {
+            List<Type> traitTypes = actor.GetTraitTypes();
+            foreach (Type traitType in traitTypes)
+            {
+                List<Actor> actors = _actors[traitType];
+                if (!actors.Contains(actor))
+                {
+                    actors.Add(actor);
+                    actor.SetListener(this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets all the actors that have the specified trait type. If no actors with the trait are 
+        /// found an empty list is returned.
+        /// </summary>
+        /// <typeparam name="T">The trait type to look for.</typeparam>
+        /// <returns>All the actors with the specified trait.</returns>
+        public async List<Actor> GetActorsWith<T>() where T : Trait
+        {
+            return GetActorsWith(T);
+        }
+
+        /// <summary>
+        /// Gets all the actors that have the specified trait type. If no actors with the trait are 
+        /// found an empty list is returned.
+        /// </summary>
+        /// <param name="traitType">The trait type to look for.</param>
+        /// <returns>All the actors with the specified trait.</returns>
+        public List<Actor> GetActorsWith(T traitType) where T : Trait
+        {
+            List<Actor> results = new List<Actor>();
+            if (_actors.ContainsKey(traitType))
+            {
+                List<Actor> actors = _actors[traitType];
+                results = new List<Actor>(actors);
+            }
+            return results;
+        }
+
+        /// <summary>
+        /// Gets the first actor that has the specified trait type. 
+        /// </summary>
+        /// <typeparam name="T">The trait type to look for.</typeparam>
+        /// <returns>The first actor with the specified trait.</returns>
+        /// <exception cref="ArgumentException">If no actor with the trait type exists.</exception>
+        public Actor GetFirstActorWith<T>() where T : Trait
+        {
+            return GetFirstActorWith(T);
+        }
+
+        /// <summary>
+        /// Gets the first actor that has the specified trait type. 
+        /// </summary>
+        /// <param name="traitType">The trait type to look for.</param>
+        /// <returns>The first actor with the specified trait.</returns>
+        /// <exception cref="ArgumentException">If no actor with the trait type exists.</exception>
+        public Actor GetFirstActorWith(T traitType) where T : Trait
+        {
+            List<Actor> actors = GetActorsWith(traitType);
+            if (actors.Count == 0)
+            {
+                throw new ArgumentException($"no actor found with {traitType} trait");
+            }
+            return actors[0];
+        }
+
+        /// <summary>
+        /// Removes the actor from the Cast.
+        /// </summary>
+        /// <param name="actor">The actor to remove from the cast.</param>
+        public void Remove(Actor actor)
+        {
+            List<Type> traitTypes = actor.GetTraitTypes();
+            foreach (Type traitType in traitTypes)
+            {
+                List<Actor> actors = _actors[traitType];
+                actors.Remove(actor);
+            }
+            actor.DetachListener();
+        }
+    }
+}
+
+----------------------------------------------------------------------------------------------------
+
+using Unit06.Game.Casting;
+
+
+namespace Unit06.Game.Scripting 
+{
+    /// <summary>
+    /// A callback that can be used to trigger scene changes.
+    /// </summary>
+    public abstract class ActionCallback
+    {
+        /// <summary>
+        /// Called when we need to transition from one scene to the next.
+        /// </summary>
+        /// <param name="sceneName">The next scene.</param>
+        void OnNextScene(string sceneName);
+    }
+}
+
+----------------------------------------------------------------------------------------------------
