@@ -62,6 +62,7 @@ namespace Byui.Game.Services
             Point position = actor.Interpolate(alpha);
             int x = position.GetX();
             int y = position.GetY();
+            
             Raylib.DrawTexture(texture, x, y, Raylib_cs.Color.WHITE);
         }
 
