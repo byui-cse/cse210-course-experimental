@@ -13,7 +13,7 @@ namespace Byui.Games.Services
     {
         public RaylibPhysicsService() { }
 
-        public void BounceIn(Rectangle region, Circle circle)
+        public void BounceIn(Casting.Rectangle region, Circle circle)
         {
             if (circle.GetLeft() < region.GetLeft() || circle.GetRight() > region.GetRight())
             {
@@ -29,23 +29,23 @@ namespace Byui.Games.Services
             }
         }
 
-        public void BounceIn(Rectangle region, Polygon polygon)
+        public void BounceIn(Casting.Rectangle region, Polygon polygon)
         {
             if (polygon.GetLeft() < region.GetLeft() || polygon.GetRight() > region.GetRight())
             {
-                Vector2 oldVelocity = rectangle.GetVelocity();
+                Vector2 oldVelocity = polygon.GetVelocity();
                 Vector2 newVelocity = new Vector2(oldVelocity.X * -1, oldVelocity.Y);
                 polygon.SetVelocity(newVelocity);
             }
             else if (polygon.GetTop() < region.GetTop() || polygon.GetBottom() > region.GetBottom())
             {
-                Vector2 oldVelocity = texture.GetVelocity();
+                Vector2 oldVelocity = polygon.GetVelocity();
                 Vector2 newVelocity = new Vector2(oldVelocity.X, oldVelocity.Y * -1);
                 polygon.SetVelocity(newVelocity);
             }
         }
 
-        public void BounceIn(Rectangle region, Rectangle rectangle)
+        public void BounceIn(Casting.Rectangle region, Casting.Rectangle rectangle)
         {
             if (rectangle.GetLeft() < region.GetLeft() || rectangle.GetRight() > region.GetRight())
             {
@@ -55,13 +55,13 @@ namespace Byui.Games.Services
             }
             else if (rectangle.GetTop() < region.GetTop() || rectangle.GetBottom() > region.GetBottom())
             {
-                Vector2 oldVelocity = texture.GetVelocity();
+                Vector2 oldVelocity = rectangle.GetVelocity();
                 Vector2 newVelocity = new Vector2(oldVelocity.X, oldVelocity.Y * -1);
                 rectangle.SetVelocity(newVelocity);
             }
         }
 
-        public void BounceIn(Rectangle region, Texture texture)
+        public void BounceIn(Casting.Rectangle region, Texture texture)
         {
             if (texture.GetLeft() < region.GetLeft() || texture.GetRight() > region.GetRight())
             {
@@ -206,15 +206,15 @@ namespace Byui.Games.Services
             return IsRight(rec1, intersection);
         }
 
-        public void LimitTo(Rectangle region, Circle circle)
+        public void LimitTo(Casting.Rectangle region, Circle circle)
         {
-            int x = circle.GetLeft();
-            int y = circle.GetTop();
+            float x = circle.GetLeft();
+            float y = circle.GetTop();
 
-            int maxX = region.GetRight() - circle.GetDiameter();
-            int maxY = region.GetBottom() - circle.GetDiameter();
-            int minX = region.GetX();
-            int minY = region.GetY();
+            float maxX = region.GetRight() - circle.GetDiameter();
+            float maxY = region.GetBottom() - circle.GetDiameter();
+            float minX = region.GetLeft();
+            float minY = region.GetTop();
 
             x = Math.Clamp(x, minX, maxX);
             y = Math.Clamp(y, minY, maxY);
@@ -223,15 +223,15 @@ namespace Byui.Games.Services
             circle.SetPosition(newPosition);
         }
 
-        public void LimitTo(Rectangle region, Polygon polygon)
+        public void LimitTo(Casting.Rectangle region, Polygon polygon)
         {
-            int x = polygon.GetLeft();
-            int y = polygon.GetTop();
+            float x = polygon.GetLeft();
+            float y = polygon.GetTop();
 
-            int maxX = region.GetRight() - polygon.GetWidth();
-            int maxY = region.GetBottom() - polygon.GetHeight();
-            int minX = region.GetX();
-            int minY = region.GetY();
+            float maxX = region.GetRight() - polygon.GetDiameter();
+            float maxY = region.GetBottom() - polygon.GetDiameter();
+            float minX = region.GetLeft();
+            float minY = region.GetTop();
 
             x = Math.Clamp(x, minX, maxX);
             y = Math.Clamp(y, minY, maxY);
@@ -240,15 +240,15 @@ namespace Byui.Games.Services
             polygon.SetPosition(newPosition);
         }
 
-        public void LimitTo(Rectangle region, Rectangle rectangle)
+        public void LimitTo(Casting.Rectangle region, Casting.Rectangle rectangle)
         {
-            int x = rectangle.GetLeft();
-            int y = rectangle.GetTop();
+            float x = rectangle.GetLeft();
+            float y = rectangle.GetTop();
 
-            int maxX = region.GetRight() - rectangle.GetWidth();
-            int maxY = region.GetBottom() - rectangle.GetHeight();
-            int minX = region.GetX();
-            int minY = region.GetY();
+            float maxX = region.GetRight() - rectangle.GetWidth();
+            float maxY = region.GetBottom() - rectangle.GetHeight();
+            float minX = region.GetLeft();
+            float minY = region.GetTop();
 
             x = Math.Clamp(x, minX, maxX);
             y = Math.Clamp(y, minY, maxY);
@@ -257,15 +257,15 @@ namespace Byui.Games.Services
             rectangle.SetPosition(newPosition);
         }
 
-        public void LimitTo(Rectangle region, Texture texture)
+        public void LimitTo(Casting.Rectangle region, Texture texture)
         {
-            int x = texture.GetLeft();
-            int y = texture.GetTop();
+            float x = texture.GetLeft();
+            float y = texture.GetTop();
 
-            int maxX = region.GetRight() - texture.GetWidth();
-            int maxY = region.GetBottom() - texture.GetHeight();
-            int minX = region.GetX();
-            int minY = region.GetY();
+            float maxX = region.GetRight() - texture.GetWidth();
+            float maxY = region.GetBottom() - texture.GetHeight();
+            float minX = region.GetLeft();
+            float minY = region.GetTop();
 
             x = Math.Clamp(x, minX, maxX);
             y = Math.Clamp(y, minY, maxY);
@@ -308,15 +308,15 @@ namespace Byui.Games.Services
             texture.SetPosition(position);
         }
 
-        public void WrapIn(Rectangle region, Circle circle)
+        public void WrapIn(Casting.Rectangle region, Circle circle)
         {
-            int x = circle.GetLeft();
-            int y = circle.GetTop();
+            float x = circle.GetLeft();
+            float y = circle.GetTop();
 
-            int maxX = region.GetRight();
-            int maxY = region.GetBottom();
-            int minX = region.GetX() - circle.GetDiameter();
-            int minY = region.GetY() - circle.GetDiameter();
+            float maxX = region.GetRight();
+            float maxY = region.GetBottom();
+            float minX = region.GetLeft() - circle.GetDiameter();
+            float minY = region.GetTop() - circle.GetDiameter();
 
             if (x < minX) x = maxX;
             if (x > maxX) x = minX;
@@ -327,15 +327,15 @@ namespace Byui.Games.Services
             circle.SetPosition(newPosition);
         }
 
-        public void WrapIn(Rectangle region, Polygon polygon)
+        public void WrapIn(Casting.Rectangle region, Polygon polygon)
         {
-            int x = polygon.GetLeft();
-            int y = polygon.GetTop();
+            float x = polygon.GetLeft();
+            float y = polygon.GetTop();
 
-            int maxX = region.GetRight();
-            int maxY = region.GetBottom();
-            int minX = region.GetX() - polygon.GetDiameter();
-            int minY = region.GetY() - polygon.GetDiameter();
+            float maxX = region.GetRight();
+            float maxY = region.GetBottom();
+            float minX = region.GetLeft() - polygon.GetDiameter();
+            float minY = region.GetTop() - polygon.GetDiameter();
 
             if (x < minX) x = maxX;
             if (x > maxX) x = minX;
@@ -346,15 +346,15 @@ namespace Byui.Games.Services
             polygon.SetPosition(newPosition);
         }
 
-        public void WrapIn(Rectangle region, Rectangle rectangle)
+        public void WrapIn(Casting.Rectangle region, Casting.Rectangle rectangle)
         {
-            int x = rectangle.GetLeft();
-            int y = rectangle.GetTop();
+            float x = rectangle.GetLeft();
+            float y = rectangle.GetTop();
 
-            int maxX = region.GetRight();
-            int maxY = region.GetBottom();
-            int minX = region.GetX() - rectangle.GetWidth();
-            int minY = region.GetY() - rectangle.GetHeight();
+            float maxX = region.GetRight();
+            float maxY = region.GetBottom();
+            float minX = region.GetLeft() - rectangle.GetWidth();
+            float minY = region.GetTop() - rectangle.GetHeight();
 
             if (x < minX) x = maxX;
             if (x > maxX) x = minX;
@@ -365,15 +365,15 @@ namespace Byui.Games.Services
             rectangle.SetPosition(newPosition);
         }
 
-        public void WrapIn(Rectangle region, Texture texture)
+        public void WrapIn(Casting.Rectangle region, Texture texture)
         {
-            int x = texture.GetLeft();
-            int y = texture.GetTop();
+            float x = texture.GetLeft();
+            float y = texture.GetTop();
 
-            int maxX = region.GetRight();
-            int maxY = region.GetBottom();
-            int minX = region.GetX() - texture.GetWidth();
-            int minY = region.GetY() - texture.GetHeight();
+            float maxX = region.GetRight();
+            float maxY = region.GetBottom();
+            float minX = region.GetLeft() - texture.GetWidth();
+            float minY = region.GetTop() - texture.GetHeight();
 
             if (x < minX) x = maxX;
             if (x > maxX) x = minX;

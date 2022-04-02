@@ -19,7 +19,7 @@ namespace Byui.Games.Casting
             polygon.SetPosition(GetPosition());
             polygon.SetRadius(GetRadius());
             polygon.SetRotation(GetRotation());
-            polygon.SetSides(SetSides());
+            polygon.SetSides(GetSides());
             polygon.SetVelocity(GetVelocity());
             return polygon;
         }
