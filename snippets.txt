@@ -204,3 +204,577 @@ namespace Unit06.Game.Scripting
 }
 
 ----------------------------------------------------------------------------------------------------
+
+public ApplyTo(Body body)
+        {
+            Point position = body.GetPosition();
+            Point size = body.GetSize();
+            Point topLeft = _region.GetTopLeft();
+            Point bottomRight = _region.GetBottomRight().Subtract(size);
+
+            int x = position.GetX();
+            int y = position.GetY();
+            int maxX = bottomRight.GetX();
+            int maxY = bottomRight.GetY();
+            int minX = topLeft.GetX();
+            int minY = topLeft.GetY();
+
+            x = Math.Clamp(x, minX, maxX);
+            y = Math.Clamp(y, minY, maxY);
+
+            position = new Point(x, y);
+            body.MoveTo(newPosition);
+        }
+
+
+public int GetRotation()
+        {
+            return _rotation;
+        }
+
+
+
+
+
+
+
+
+using System;
+using System.Numerics;
+
+namespace Byui.Games.Casting
+{
+    /// <summary>
+    /// A distance from a relative origin.
+    /// </summary>
+    public class Point
+    {
+        private int _x = 0;
+        private int _y = 0;
+
+        public Point() { }
+        
+        public Point(int x, int y)
+        {
+            _x = x;
+            _y = y;
+        }
+
+        public Point Add(Point other)
+        {
+            int x = _x + other.GetX();
+            int y = _y + other.GetY();
+            return new Point(x, y);
+        }
+
+        public Point Copy()
+        {
+            return new Point(_x, _y);
+        }
+
+        public Point DivideBy(int factor)
+        {
+            int x = _x / factor;
+            int y = _y / factor;
+            return new Point(x, y);
+        }
+
+        public override bool Equals(object other)
+        {
+            return Equals(other as Point);
+        }
+
+        public bool Equals(Point other)
+        {
+            return _x == other.GetX() && _y == other.GetY();
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_x, _y);
+        }
+
+        public int GetX()
+        {
+            return _x;
+        }
+
+        public int GetY()
+        {
+            return _y;
+        }
+
+        public Point Interpolate(Point other, double alpha)
+        {
+            Point a = this.MultiplyBy(alpha);
+            Point b = other.MultiplyBy(1.0 - alpha);
+            return a.Add(b);
+        }
+
+        public Point Invert()
+        {
+            int x = _x * -1;
+            int y = _y * -1;
+            return new Point(x, y);
+        }
+
+        public Point MultiplyBy(double factor)
+        {
+            int x = (int)(_x * factor);
+            int y = (int)(_y * factor);
+            return new Point(x, y);
+        }
+
+        public Point Subtract(Point other)
+        {
+            int x = _x - other.GetX();
+            int y = _y - other.GetY();
+            return new Point(x, y);
+        }
+
+        public Vector2 ToVector()
+        {
+            return new Vector2(_x, _y);
+        }
+    }
+}
+
+
+
+
+
+/// <summary>
+        /// Enumerates all lines for given section.
+        /// </summary>
+        /// <param name="sectionName">Section to enum.</param>
+        public String[] EnumerateSection(String sectionName)
+        {
+            ArrayList tmpArray = new ArrayList();
+
+            foreach (SectionPair pair in keyPairs.Keys)
+            {
+                if (pair.Section == sectionName.ToUpper())
+                    tmpArray.Add(pair.Key);
+            }
+
+            return (String[])tmpArray.ToArray(typeof(String));
+        }
+
+        /// <summary>
+        /// Adds or replaces a setting to the table to be saved.
+        /// </summary>
+        /// <param name="sectionName">Section to add under.</param>
+        /// <param name="settingName">Key name to add.</param>
+        /// <param name="settingValue">Value of key.</param>
+        public void AddSetting(String sectionName, String settingName, String settingValue)
+        {
+            SectionPair sectionPair;
+            sectionPair.Section = sectionName.ToUpper();
+            sectionPair.Key = settingName.ToUpper();
+
+            if (keyPairs.ContainsKey(sectionPair))
+                keyPairs.Remove(sectionPair);
+
+            keyPairs.Add(sectionPair, settingValue);
+        }
+
+        /// <summary>
+        /// Adds or replaces a setting to the table to be saved with a null value.
+        /// </summary>
+        /// <param name="sectionName">Section to add under.</param>
+        /// <param name="settingName">Key name to add.</param>
+        public void AddSetting(String sectionName, String settingName)
+        {
+            AddSetting(sectionName, settingName, null);
+        }
+
+        /// <summary>
+        /// Remove a setting.
+        /// </summary>
+        /// <param name="sectionName">Section to add under.</param>
+        /// <param name="settingName">Key name to add.</param>
+        public void DeleteSetting(String sectionName, String settingName)
+        {
+            SectionPair sectionPair;
+            sectionPair.Section = sectionName.ToUpper();
+            sectionPair.Key = settingName.ToUpper();
+
+            if (keyPairs.ContainsKey(sectionPair))
+                keyPairs.Remove(sectionPair);
+        }
+
+        /// <summary>
+        /// Save settings to new file.
+        /// </summary>
+        /// <param name="newFilePath">New file path.</param>
+        public void SaveSettings(String newFilePath)
+        {
+            ArrayList sections = new ArrayList();
+            String tmpValue = "";
+            String strToSave = "";
+
+            foreach (SectionPair sectionPair in keyPairs.Keys)
+            {
+                if (!sections.Contains(sectionPair.Section))
+                    sections.Add(sectionPair.Section);
+            }
+
+            foreach (String section in sections)
+            {
+                strToSave += ("[" + section + "]\r\n");
+
+                foreach (SectionPair sectionPair in keyPairs.Keys)
+                {
+                    if (sectionPair.Section == section)
+                    {
+                        tmpValue = (String)keyPairs[sectionPair];
+
+                        if (tmpValue != null)
+                            tmpValue = "=" + tmpValue;
+
+                        strToSave += (sectionPair.Key + tmpValue + "\r\n");
+                    }
+                }
+
+                strToSave += "\r\n";
+            }
+
+            try
+            {
+                TextWriter tw = new StreamWriter(newFilePath);
+                tw.Write(strToSave);
+                tw.Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Save settings back to ini file.
+        /// </summary>
+        public void SaveSettings()
+        {
+            SaveSettings(iniFilePath);
+        }
+    }
+
+
+
+    using System.Collections.Generic;
+using Byui.Games.Scripting;
+
+
+namespace Byui.Games.Directing
+{
+    /// <summary>
+    /// Controls the sequence and pacing of the game.
+    /// </summary>
+    public class Director2 : IActionCallback
+    {
+        private const int DefaultFramesPerSecond = 60;
+
+        private Clock _clock = new Clock(DefaultFramesPerSecond);
+        private Scene _scene = new Scene();
+        private Statistics _statistics = new Statistics();
+
+        public Director2(Scene scene)
+        {
+            _scene = scene;
+        }
+
+        public void OnDebug(string message)
+        {
+            System.Console.Out.WriteLine($"DEBUG: {message}");
+        }
+
+        public void OnError(string message, System.Exception exception)
+        {
+            _clock.Stop();
+            System.Console.Error.WriteLine($"ERROR: {message}");
+            System.Console.Error.WriteLine(exception.Message);
+            System.Console.Error.WriteLine(exception.StackTrace);
+        }
+
+        public void OnStop()
+        {
+            _clock.Stop();
+            System.Console.WriteLine("** Game Stopped **");
+            
+        }
+
+        public void StartGame()
+        {
+            // load phase
+            _clock.Start();
+            ExecuteActions(Phase.Load);
+
+            while (_clock.IsRunning())
+            {
+                // input phase
+                _clock.AddTime();
+                ExecuteActions(Phase.Input);
+
+                // update phase
+                while (_clock.HasTime())
+                {
+                    ExecuteActions(Phase.Update);
+                    _clock.UseTime();
+                }
+
+                // output phase
+                ExecuteActions(Phase.Output);
+                _scene.ApplyChanges();
+
+                // finish frame
+                _clock.UpdateStatistics(_statistics);
+                _scene.UpdateStatistics(_statistics);
+            }
+
+            // unload phase
+            ExecuteActions(Phase.Unload);
+        }
+
+        private void ExecuteActions(int phase)
+        {
+            List<Action> actions = _scene.GetAllActionsIn(phase);
+            foreach(Action action in actions)
+            {
+                action.Execute(_scene, this);
+            }
+        }
+    }
+}
+
+
+using System;
+
+
+namespace Byui.Games.Scripting
+{
+    /// <summary>
+    /// A simulation clock.
+    /// </summary>
+    class Clock
+    {
+        private float _availableSeconds;
+        private float _frameDurationInSeconds;
+        private int _numOfFrames;
+        private DateTime _previousTime;
+        private bool _running;
+        private DateTime _startTime;
+        private int _numOfUpdates;
+
+        public Clock(int framesPerSecond)
+        {
+            _availableSeconds = 0f;
+            _frameDurationInSeconds = 1f / framesPerSecond;
+            _numOfFrames = 0;
+            _previousTime = DateTime.Now.ToUniversalTime();
+            _running = false;
+            _startTime = DateTime.Now.ToUniversalTime();;
+            _numOfUpdates = 0;
+        }
+
+        public void AddTime()
+        {
+            DateTime currentTime = DateTime.Now.ToUniversalTime();
+            TimeSpan elapsedTime = currentTime - _previousTime;
+            _previousTime = currentTime;
+            _availableSeconds += (float)elapsedTime.TotalSeconds;
+            _numOfFrames++;
+        }
+
+        public bool HasTime()
+        {
+            return _availableSeconds >= _frameDurationInSeconds;
+        }
+
+        public bool IsRunning()
+        {
+            return _running;
+        }
+
+        public void Start()
+        {
+            _running = true;
+            _startTime = DateTime.Now.ToUniversalTime();
+        }
+
+        public void Stop()
+        {
+            _running = false;
+        }
+
+        public void UpdateStatistics(Statistics statistics)
+        {
+            DateTime currentTime = DateTime.Now.ToUniversalTime();
+            TimeSpan elapsedTime = currentTime - _startTime;
+            statistics.Alpha = _availableSeconds / _frameDurationInSeconds;
+            statistics.FramesPerSecond = _numOfFrames / (float)elapsedTime.TotalSeconds;
+            statistics.UpdatesPerSecond = _numOfUpdates / (float)elapsedTime.TotalSeconds;
+        }
+
+        public void UseTime()
+        {
+            _availableSeconds -= _frameDurationInSeconds;
+            _numOfUpdates++;
+        }
+    }
+}
+
+
+
+
+
+
+public bool IsAbove(RigidBody other)
+        {
+            Validator.CheckNotNull(other);
+            return this.GetTop() < other.GetTop();
+        }
+
+        public bool IsBelow(RigidBody other)
+        {
+            Validator.CheckNotNull(other);
+            return this.GetBottom() > other.GetBottom();
+        }
+
+        public bool IsLeftOf(RigidBody other)
+        {
+            Validator.CheckNotNull(other);
+            return this.GetLeft() < other.GetLeft();
+        }
+
+public bool IsRightOf(RigidBody other)
+        {
+            Validator.CheckNotNull(other);
+            return this.GetRight() > other.GetRight();
+        }
+
+
+
+
+
+        using System;
+using System.Collections.Generic;
+using Byui.Games.Casting;
+using Byui.Games.Scripting;
+using Byui.Games.Services;
+using Pong.Game.Casting;
+
+
+namespace Pong.Game.Scripting
+{
+    public class DrawActorsAction : Core.Scripting.Action
+    {
+        private IVideoService _videoService;
+
+        public DrawActorsAction(IServiceFactory serviceFactory)
+        {
+            _videoService = serviceFactory.GetVideoService();
+        }
+
+        public override void Execute(Scene scene, IActionCallback callback)
+        {
+            try
+            {
+                _videoService.ClearBuffer();
+                DrawBackground(scene);
+                // DrawPaddles(scene);
+                _videoService.FlushBuffer();
+            }
+            catch (Exception exception)
+            {
+                callback.OnError("Couldn't draw actors.", exception);
+            }
+        }
+
+        private void DrawBackground(Scene scene)
+        {
+            Image background = (Image)scene.GetFirstActorIn("background.group");
+            _videoService.Draw(background);
+        }
+
+        private void DrawPaddles(Scene scene)
+        {
+            List<Actor> actors = scene.GetAllActorsIn("paddle.group");
+            foreach (Actor actor in actors)
+            {
+                Paddle paddle = (Paddle)actor;
+                _videoService.Draw(paddle);
+            }
+        }
+
+    }
+}
+
+
+
+namespace Byui.Games.Casting
+{
+    /// <summary>
+    /// A text font.
+    /// </summary>
+    public class Font
+    {
+        private Color _color = Color.White();
+        private string _file = string.Empty;
+        private float _size = 12f;
+        
+        public Font() { }
+
+        public Color GetColor()
+        {
+            return _color;
+        }
+
+        public string GetFile()
+        {
+            return _file;
+        }
+
+        public float GetSize()
+        {
+            return _size;
+        }
+
+        public void SetColor(Color color)
+        {
+            Validator.CheckNotNull(color);
+            _color = color;
+        }
+
+        public void SetFile(string file)
+        {
+            Validator.CheckNotBlank(file);
+            _file = file;
+        }
+
+        public void SetSize(float size)
+        {
+            Validator.CheckGreaterThan(size, 0);
+            _size = size;
+        }
+    }
+}
+
+
+
+
+            using (var streamReader = new StreamReader(_filepath))
+            {
+                string line = streamReader.ReadLine();
+                while (line != null)
+                {
+                    if (line != string.Empty && !line.StartsWith("#"))
+                    {
+                        string[] pair = line.Split("=");
+                        string key = pair[0].Trim();
+                        string value = pair[1].Trim();
+                         _settings.Add(key, value);
+                    }
+                    line = streamReader.ReadLine();
+                }
+            }

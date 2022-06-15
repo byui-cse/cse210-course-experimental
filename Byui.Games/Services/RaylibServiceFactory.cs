@@ -8,16 +8,25 @@ namespace Byui.Games.Services
         private static IAudioService AudioService;
         private static IKeyboardService KeyboardService;
         private static IMouseService MouseService;
-        private static IPhysicsService PhysicsService;
+        private static ISettingsService SettingsService;
         private static IVideoService VideoService;
 
-        public RaylibServiceFactory(Settings settings)
+        public RaylibServiceFactory()
         {
-            AudioService = new RaylibAudioService(settings);
+            SettingsService = new JsonSettingsService();
+            AudioService = new RaylibAudioService(SettingsService);
             KeyboardService = new RaylibKeyboardService();
             MouseService = new RaylibMouseService();
-            PhysicsService = new RaylibPhysicsService();
-            VideoService = new RaylibVideoService(settings);
+            VideoService = new RaylibVideoService(SettingsService);
+        }
+
+        public RaylibServiceFactory(string filepath)
+        {
+            SettingsService = new JsonSettingsService(filepath);
+            AudioService = new RaylibAudioService(SettingsService);
+            KeyboardService = new RaylibKeyboardService();
+            MouseService = new RaylibMouseService();
+            VideoService = new RaylibVideoService(SettingsService);
         }
 
         public IAudioService GetAudioService()
@@ -35,9 +44,9 @@ namespace Byui.Games.Services
             return MouseService;
         }
 
-        public IPhysicsService GetPhysicsService()
+        public ISettingsService GetSettingsService()
         {
-            return PhysicsService;
+            return SettingsService;
         }
 
         public IVideoService GetVideoService()

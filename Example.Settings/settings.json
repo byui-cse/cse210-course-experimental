@@ -1,0 +1,17 @@
+{
+  "frameRate": 60,
+  "screenCaption": "CSE210 Settings Example",
+  "screenWidth": 640,
+  "screenHeight": 480,
+  "robotWidth": 96,
+  "robotHeight": 96,
+  "robotWalking": [
+    "Assets/robot1.png",
+    "Assets/robot2.png",
+    "Assets/robot3.png",
+    "Assets/robot4.png",
+    "Assets/robot5.png",
+    "Assets/robot6.png"
+  ],
+  "robotWalkingDuration": 0.3
+}

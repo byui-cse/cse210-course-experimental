@@ -11,17 +11,20 @@ namespace Byui.Games.Directing
     {
         private IAudioService _audioService = null;
         private IVideoService _videoService = null;
-        
+        private ISettingsService _settingsService = null;
+
         public Director(IServiceFactory serviceFactory)
         {
             _audioService = serviceFactory.GetAudioService();
             _videoService = serviceFactory.GetVideoService();
+            _settingsService = serviceFactory.GetSettingsService();
         }
 
         public void OnError(string message, System.Exception exception)
         {
             _audioService.Release();
             _videoService.Release();
+            _settingsService.Save();
             System.Console.Error.WriteLine($"ERROR: {message}");
             System.Console.Error.WriteLine(exception.Message);
             System.Console.Error.WriteLine(exception.StackTrace);
@@ -38,11 +41,6 @@ namespace Byui.Games.Directing
             _videoService.Release();
         }
 
-        public void OnWarning(string message)
-        {
-            System.Console.Out.WriteLine($"WARNING: {message}");
-        }
-
         public void Direct(Scene scene)
         {
             _audioService.Initialize();
@@ -56,12 +54,13 @@ namespace Byui.Games.Directing
             }
             _audioService.Release();
             _videoService.Release();
+            _settingsService.Save();
         }
 
         private void DoActions(int phase, Scene scene)
         {
             float deltaTime = _videoService.GetDeltaTime();
-            List<Action> actions = scene.GetAllActionsIn(phase);
+            List<Action> actions = scene.GetAllActions(phase);
             foreach(Action action in actions)
             {
                 action.Execute(scene, deltaTime, this);

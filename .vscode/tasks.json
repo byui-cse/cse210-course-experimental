@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Unit06/Game.Entities.Test/Game.Entities.Test.csproj",
+                "${workspaceFolder}/Example.Breaker/Example.Breaker.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/Unit06/Game.Entities.Test/Game.Entities.Test.csproj",
+                "${workspaceFolder}/Example.Breaker/Example.Breaker.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/Unit06/Game.Entities.Test/Game.Entities.Test.csproj"
+                "${workspaceFolder}/Example.Breaker/Example.Breaker.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

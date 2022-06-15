@@ -1,3 +1,5 @@
+using Byui.Games.Casting;
+
 namespace Byui.Games.Services
 {
     public interface IServiceFactory
@@ -5,7 +7,7 @@ namespace Byui.Games.Services
         IAudioService GetAudioService();
         IKeyboardService GetKeyboardService();
         IMouseService GetMouseService();
-        IPhysicsService GetPhysicsService();
+        ISettingsService GetSettingsService();
         IVideoService GetVideoService();
     }
 }

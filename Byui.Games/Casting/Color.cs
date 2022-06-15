@@ -12,10 +12,11 @@ namespace Byui.Games.Casting
         public static Color Orange() { return new Color(255, 128, 0); }
         public static Color Yellow() { return new Color(255, 255, 0); }
         public static Color Green() { return new Color(0, 255, 0); }
-        public static Color Blue() { return new Color(0, 0, 255); }
-        public static Color Purple() { return new Color(255, 0, 255); }
+        public static Color Blue() { return new Color(0, 128, 255); }
+        public static Color Purple() { return new Color(127, 0, 255); }
         public static Color White() { return new Color(255, 255, 255); }
-        
+        public static Color Gray() { return new Color(128, 128, 128); }
+
         private byte _red = 0;
         private byte _green = 0;
         private byte _blue = 0;

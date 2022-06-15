@@ -48,6 +48,12 @@ namespace Byui.Games.Scripting
             _removed.Clear();
         }
 
+        public void Clear()
+        {
+            _current.Clear();
+            _removed.Clear();
+        }
+
         public List<Action> GetAllActionsIn(int phase)
         {
             Validator.CheckInRange(phase, Phase.Input, Phase.Output);

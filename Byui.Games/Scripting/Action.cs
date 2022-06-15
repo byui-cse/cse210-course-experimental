@@ -9,11 +9,6 @@ namespace Byui.Games.Scripting
 
         public Action() { }
 
-        public bool IsEnabled()
-        {
-            return _enabled;
-        }
-
         public void Disable()
         {
             _enabled = false;
@@ -25,5 +20,11 @@ namespace Byui.Games.Scripting
         }
         
         public abstract void Execute(Scene scene, float deltaTime, IActionCallback callback);
+    
+        public bool IsEnabled()
+        {
+            return _enabled;
+        }
+
     }
 }

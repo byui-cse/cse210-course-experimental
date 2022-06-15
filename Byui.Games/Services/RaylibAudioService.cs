@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using Byui.Games.Casting;
-using Byui.Games.Services;
 using Raylib_cs;
 
 
@@ -10,15 +7,11 @@ namespace Byui.Games.Services
 {
     public class RaylibAudioService : IAudioService
     {
-        private Dictionary<string, Raylib_cs.Music> _music 
-            = new Dictionary<string, Raylib_cs.Music>();
-        
-        private Settings _settings = null;
-        
-        private Dictionary<string, Raylib_cs.Sound> _sounds
-            = new Dictionary<string, Raylib_cs.Sound>();
+        private Dictionary<string, Music> _music = new Dictionary<string, Music>();
+        private ISettingsService _settings = null;
+        private Dictionary<string, Sound> _sounds = new Dictionary<string, Sound>();
 
-        public RaylibAudioService(Settings settings)
+        public RaylibAudioService(ISettingsService settings)
         {
             _settings = settings;
         }
@@ -28,20 +21,18 @@ namespace Byui.Games.Services
             if (!Raylib.IsAudioDeviceReady())
             {
                 Raylib.InitAudioDevice();
-                LoadMusic();
-                LoadSounds();
             }
         }
 
-        public bool IsPlayingMusic(string filename)
+        public bool IsPlayingMusic(string posixFilepath)
         {
-            Music music = GetRaylibMusic(filename);
+            Music music = GetRaylibMusic(posixFilepath);
             return Raylib.IsMusicStreamPlaying(music);
         }
 
-        public bool IsPlayingSound(string filename)
+        public bool IsPlayingSound(string posixFilepath)
         {
-            Sound sound = GetRaylibSound(filename);
+            Sound sound = GetRaylibSound(posixFilepath);
             return Raylib.IsSoundPlaying(sound);
         }
         
@@ -50,27 +41,27 @@ namespace Byui.Games.Services
             return Raylib.IsAudioDeviceReady();
         }
 
-        public void PauseMusic(string filename)
+        public void PauseMusic(string posixFilepath)
         {
-            Music music = GetRaylibMusic(filename);
+            Music music = GetRaylibMusic(posixFilepath);
             Raylib.PauseMusicStream(music);
         }
 
-        public void PauseSound(string filename)
+        public void PauseSound(string posixFilepath)
         {
-            Sound sound = GetRaylibSound(filename);
+            Sound sound = GetRaylibSound(posixFilepath);
             Raylib.PauseSound(sound);
         }
 
-        public void PlayMusic(string filename)
+        public void PlayMusic(string posixFilepath)
         {
-            Music music = GetRaylibMusic(filename);
+            Music music = GetRaylibMusic(posixFilepath);
             Raylib.PlayMusicStream(music);
         }
 
-        public void PlaySound(string filename)
+        public void PlaySound(string posixFilepath)
         {
-            Sound sound = GetRaylibSound(filename);
+            Sound sound = GetRaylibSound(posixFilepath);
             Raylib.PlaySound(sound);
         }
 
@@ -84,107 +75,70 @@ namespace Byui.Games.Services
             }
         }
 
-        public void ResumeMusic(string filename)
+        public void ResumeMusic(string posixFilepath)
         {
-            Music music = GetRaylibMusic(filename);
+            Music music = GetRaylibMusic(posixFilepath);
             Raylib.ResumeMusicStream(music);
         }
 
-        public void ResumeSound(string filename)
+        public void ResumeSound(string posixFilepath)
         {
-            Sound sound = GetRaylibSound(filename);
+            Sound sound = GetRaylibSound(posixFilepath);
             Raylib.ResumeSound(sound);
         }
 
-        public void StopMusic(string filename)
+        public void StopMusic(string posixFilepath)
         {
-            Music music = GetRaylibMusic(filename);
+            Music music = GetRaylibMusic(posixFilepath);
             Raylib.StopMusicStream(music);
         }
 
-        public void StopSound(string filename)
+        public void StopSound(string posixFilepath)
         {
-            Sound sound = GetRaylibSound(filename);
+            Sound sound = GetRaylibSound(posixFilepath);
             Raylib.StopSound(sound);
         }
 
-        private List<string> GetFilepaths(string directory, string[] searchPatterns)
+        public void UpdateMusic(string posixFilepath)
         {
-            List<string> filepaths = new List<string>();
-            foreach (string searchPpattern in searchPatterns)
-            {
-                string[] files = Directory.GetFiles(directory, searchPpattern);
-                filepaths.AddRange(files);
-            }
-            return filepaths;
+            Music music = GetRaylibMusic(posixFilepath);
+            Raylib.UpdateMusicStream(music);
         }
 
-        private Raylib_cs.Music GetRaylibMusic(string filename)
+        private Raylib_cs.Music GetRaylibMusic(string posixFilepath)
         {
-            if (!_music.ContainsKey(filename))
+            string filepath = posixFilepath.Replace('/', Path.DirectorySeparatorChar);
+            if (!_music.ContainsKey(filepath))
             {
-                throw new ArgumentException($"{filename} was not loaded.");
+                _music[filepath] = Raylib.LoadMusicStream(filepath);
             }
-            return _music[filename];
+            return _music[filepath];
         }
 
-        private Raylib_cs.Sound GetRaylibSound(string filename)
+        private Raylib_cs.Sound GetRaylibSound(string posixFilepath)
         {
-            if (!_sounds.ContainsKey(filename))
+            string filepath = posixFilepath.Replace('/', Path.DirectorySeparatorChar);
+            if (!_sounds.ContainsKey(filepath))
             {
-                throw new ArgumentException($"{filename} was not loaded.");
+                _sounds[filepath] = Raylib.LoadSound(filepath);
             }
-            return _sounds[filename];
-        }
-
-        private void LoadMusic()
-        {
-            if (_settings.Has("music", "filetypes")
-                && _settings.Has("music", "directory"))
-            {
-                string filetypes = _settings.GetString("music", "filetypes");
-                string directory = _settings.GetString("music", "directory");
-                string[] searchPatterns = filetypes.Split(",");
-                List<string> filepaths = GetFilepaths(directory, searchPatterns);
-                foreach (string filepath in filepaths)
-                {
-                    string filename = Path.GetFileName(filepath);
-                    _music[filename] = Raylib.LoadMusicStream(filepath);
-                }
-            }
-        }
-
-        private void LoadSounds()
-        {
-            if (_settings.Has("sounds", "filetypes")
-                && _settings.Has("sounds", "directory"))
-            {
-                string filetypes = _settings.GetString("sounds", "filetypes");
-                string directory = _settings.GetString("sounds", "directory");
-                string[] searchPatterns = filetypes.Split(",");
-                List<string> filepaths = GetFilepaths(directory, searchPatterns);
-                foreach (string filepath in filepaths)
-                {
-                    string filename = Path.GetFileName(filepath);
-                    _sounds[filename] = Raylib.LoadSound(filepath);
-                }
-            }
+            return _sounds[filepath];
         }
 
         private void UnloadMusic()
         {
-            foreach (string file in _music.Keys)
+            foreach (string filepath in _music.Keys)
             {
-                Raylib_cs.Music music = _music[file];
+                Raylib_cs.Music music = _music[filepath];
                 Raylib.UnloadMusicStream(music);
             }
         }
 
         private void UnloadSounds()
         {
-            foreach (string file in _sounds.Keys)
+            foreach (string filepath in _sounds.Keys)
             {
-                Raylib_cs.Sound sound = _sounds[file];
+                Raylib_cs.Sound sound = _sounds[filepath];
                 Raylib.UnloadSound(sound);
             }
         }

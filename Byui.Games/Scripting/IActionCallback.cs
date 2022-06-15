@@ -14,6 +14,5 @@ namespace Byui.Games.Scripting
         void OnInfo(string message);
         void OnStop();
         void OnError(string message, Exception exception);
-        void OnWarning(string message);
     }
 }

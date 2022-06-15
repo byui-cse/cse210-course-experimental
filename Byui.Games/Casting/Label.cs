@@ -6,49 +6,65 @@ namespace Byui.Games.Casting
     /// <remarks>
     /// The responssibility of Text is to define the textual appearance of an Actor.
     /// </remarks>
-    public class Label : Texture
+    public class Label : Actor
     {
-        public const int LeftAligned = 0;
-        public const int CenterAligned = 1;
-        public const int RightAligned = 2;
+        public const int Left = 0;
+        public const int Center = 1;
+        public const int Right = 2;
         
-        private int _alignment = LeftAligned;
-        private Font _font = new Font();
+        private int _alignment = Left;
+        private Color _fontColor = Color.White();
+        private string _fontFile = string.Empty;
+        private float _fontSize = 18f;
         private string _text = string.Empty;
         
         public Label() {}
+
+        public void Align(int alignment)
+        {
+            Validator.CheckInRange(alignment, Left, Right);
+            _alignment = alignment;
+        }
+
+        public void Display(string text)
+        {
+            Validator.CheckNotBlank(text);
+            _text = text;
+        }
 
         public int GetAlignment()
         {
             return _alignment;
         }
 
-        public Font GetFont()
+        public Color GetFontColor()
         {
-            return _font;
+            return _fontColor;
         }
 
-        public string GetText()
+        public string GetFontFile()
+        {
+            return _fontFile;
+        }
+
+        public float GetFontSize()
+        {
+            return _fontSize;
+        }
+
+        public virtual string GetText()
         {
             return _text;
         }
 
-        public void SetAlignment(int alignment)
+        public void SetFont(string file, float size, Color color)
         {
-            Validator.CheckInRange(alignment, LeftAligned, RightAligned);
-            _alignment = alignment;
-        }
-
-        public void SetFont(Font font)
-        {
-            Validator.CheckNotNull(font);
-            _font = font;
-        }
-
-        public void SetText(string text)
-        {
-            Validator.CheckNotBlank(text);
-            _text = text;
+            Validator.CheckNotNull(file);
+            Validator.CheckGreaterThan(size, 0);
+            Validator.CheckNotNull(color);
+            _fontFile = file;
+            _fontSize = size;
+            _fontColor = color;
         }
     }
 }

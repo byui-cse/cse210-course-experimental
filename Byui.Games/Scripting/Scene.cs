@@ -33,19 +33,35 @@ namespace Byui.Games.Scripting
             _script.ApplyChanges();
         }
 
-        public List<Action> GetAllActionsIn(int phase)
+        public void Clear()
+        {
+            _cast.Clear();
+            _script.Clear();
+        }
+
+        public List<Action> GetAllActions(int phase)
         {
             return _script.GetAllActionsIn(phase);
         }
 
-        public List<Actor> GetAllActorsIn(string group)
+        public List<Actor> GetAllActors(string group)
         {
-            return _cast.GetAllActorsIn(group);
+            return _cast.GetAllActors(group);
         }
 
-        public Actor GetFirstActorIn(string group)
+        public List<T> GetAllActors<T>(string group)
         {
-            return _cast.GetFirstActorIn(group);
+            return _cast.GetAllActors<T>(group);
+        }
+
+        public Actor GetFirstActor(string group)
+        {
+            return _cast.GetFirstActor(group);
+        }
+
+        public T GetFirstActor<T>(string group)
+        {
+            return _cast.GetFirstActor<T>(group);
         }
 
         public void RemoveAction(int phase, Action action)

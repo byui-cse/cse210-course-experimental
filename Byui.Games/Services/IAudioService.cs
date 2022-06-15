@@ -1,6 +1,3 @@
-using Byui.Games.Casting;
-
-
 namespace Byui.Games.Services
 {
     public interface IAudioService
@@ -17,6 +14,7 @@ namespace Byui.Games.Services
         void ResumeSound(string filename);
         void StopMusic(string filename);
         void StopSound(string filename);
+        void UpdateMusic(string filename);
         void Release();
     }
 }

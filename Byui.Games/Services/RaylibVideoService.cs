@@ -10,22 +10,12 @@ namespace Byui.Games.Services
 {
     public class RaylibVideoService : IVideoService
     {
-        private const string DefaultCaption = "CSE210";
-        private const int DefaultWidth = 480;
-        private const int DefaultHeight = 640;
-        
-        private Raylib_cs.Color _background 
-            = Raylib_cs.Color.BLACK;
+        private Raylib_cs.Color _background = Raylib_cs.Color.BLACK;
+        private Dictionary<string, Font> _fonts = new Dictionary<string, Font>();
+        private ISettingsService _settings = null;
+        private Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
 
-        private Dictionary<string, Raylib_cs.Font> _fonts 
-            = new Dictionary<string, Raylib_cs.Font>();
-
-        private Settings _settings = null;
-        
-        private Dictionary<string, Texture2D> _textures 
-            = new Dictionary<string, Texture2D>();
-        
-        public RaylibVideoService(Settings settings)
+        public RaylibVideoService(ISettingsService settings)
         {
             _settings = settings;
         }
@@ -36,106 +26,197 @@ namespace Byui.Games.Services
             Raylib.ClearBackground(_background);
         }
 
-        public void Draw(Animation animation)
+        public void Draw(Actor actor)
         {
-            string file = animation.GetFile();
-            Texture2D texture = GetRaylibTexture(file);
-            Vector2 position = animation.GetPosition();
-            float rotation = animation.GetRotation();
-            float scale = animation.GetScale();
-            Raylib_cs.Color tint = GetRaylibColor(animation.GetTint());
-
-            Raylib.DrawTextureEx(texture, position, rotation, scale, tint);
+            Raylib_cs.Color color = GetRaylibColor(actor.GetTint());
+            Vector2 position = actor.GetCenter();
+            Vector2 size = actor.GetSize();
+            float rotation = actor.GetRotation();
+            
+            Rectangle destination = new Rectangle(position.X, position.Y, size.X, size.Y);
+            Vector2 origin = new Vector2(size.X / 2, size.Y / 2);
+            
+            Raylib.DrawRectanglePro(destination, origin, rotation, color);
         }
 
-        public void Draw(Circle circle)
+        public void Draw(Actor actor, Camera camera)
         {
-            int centerX = (int)circle.GetPosition().X;
-            int centerY = (int)circle.GetPosition().Y;
-            float radius = circle.GetRadius();
-            Raylib_cs.Color color = GetRaylibColor(circle.GetColor());
+            Actor focus = camera.GetFocus();
+            Actor screen = camera.GetScreen();
 
-            if (circle.IsFilled())
+            if (actor == focus || actor.Overlaps(screen))
             {
-                Raylib.DrawCircle(centerX, centerY, radius, color);
-            }
-            else
-            {
-                Raylib.DrawCircleLines(centerX, centerY, radius, color);
+                Raylib_cs.Color color = GetRaylibColor(actor.GetTint());
+                Vector2 position = actor.GetCenter() - camera.GetPosition();
+                Vector2 size = actor.GetSize();
+                float rotation = actor.GetRotation();
+
+                Rectangle destination = new Rectangle(position.X, position.Y, size.X, size.Y);
+                Vector2 origin = new Vector2(size.X / 2, size.Y / 2);
+
+                Raylib.DrawRectanglePro(destination, origin, rotation, color);
             }
         }
 
         public void Draw(Casting.Image image)
         {
-            string file = image.GetFile();
-            Texture2D texture = GetRaylibTexture(file);
-            Vector2 position = image.GetPosition();
+            Vector2 position = image.GetCenter();
+            Vector2 originalSize = image.GetOriginalSize();
+            Vector2 size = image.GetSize();
+            
+            Texture2D texture = GetRaylibTexture(image.GetFile());
+            Rectangle source = new Rectangle(0, 0, originalSize.X, originalSize.Y);
+            Rectangle destination = new Rectangle(position.X, position.Y, size.X, size.Y);
+            Vector2 origin = new Vector2(size.X / 2, size.Y / 2);
             float rotation = image.GetRotation();
-            float scale = image.GetScale();
             Raylib_cs.Color tint = GetRaylibColor(image.GetTint());
+            
+            Raylib.DrawTexturePro(texture, source, destination, origin, rotation, tint);
+        }
 
-            Raylib.DrawTextureEx(texture, position, rotation, scale, tint);
+        public void Draw(Casting.Image image, Camera camera)
+        {
+            Actor focus = camera.GetFocus();
+            Actor screen = camera.GetScreen();
+
+            if (image == focus || image.Overlaps(screen))
+            {
+                Vector2 position = image.GetCenter() - camera.GetPosition();
+                Vector2 originalSize = image.GetOriginalSize();
+                Vector2 size = image.GetSize();
+                
+                Texture2D texture = GetRaylibTexture(image.GetFile());
+                Rectangle source = new Rectangle(0, 0, originalSize.X, originalSize.Y);
+                Rectangle destination = new Rectangle(position.X, position.Y, size.X, size.Y);
+                Vector2 origin = new Vector2(size.X / 2, size.Y / 2);
+                float rotation = image.GetRotation();
+                Raylib_cs.Color tint = GetRaylibColor(image.GetTint());
+                
+                Raylib.DrawTexturePro(texture, source, destination, origin, rotation, tint);
+            }
         }
 
         public void Draw(Label label)
         {
-            string file = label.GetFont().GetFile();
-            Raylib_cs.Font font = GetRaylibFont(file);
+            Raylib_cs.Font font = GetRaylibFont(label.GetFontFile());   
             string text = label.GetText();
             Vector2 position = label.GetPosition();
-            float size = label.GetFont().GetSize();
-            Raylib_cs.Color color = GetRaylibColor(label.GetFont().GetColor());
+            float fontSize = label.GetFontSize();
+            float spacing = 2f;
+            Raylib_cs.Color color = GetRaylibColor(label.GetFontColor());
+            
+            int alignment = label.GetAlignment();
+            Vector2 size = Raylib.MeasureTextEx(font, text, fontSize, spacing);
+            if (alignment == Label.Right) position.X = position.X - size.X;
+            if (alignment == Label.Center) position.X = position.X - (size.X / 2);
+            label.SizeTo(size);
 
-            int align = label.GetAlignment();
-            float width = (int) Raylib.MeasureTextEx(font, text, size, 0).X;
-            if (align == Label.RightAligned) position.X = position.X - width;
-            if (align == Label.CenterAligned) position.X = position.X - (width / 2);
-
-            Raylib.DrawTextEx(font, text, position, size, 0f, color);
+            Raylib.DrawTextEx(font, text, position, fontSize, spacing, color);
         }
 
-        public void Draw(Line line)
+        public void Draw(Label label, Camera camera)
         {
-            Vector2 start = line.GetStart();
-            Vector2 end = line.GetEnd();
-            Raylib_cs.Color color = GetRaylibColor(line.GetColor());
+            Actor focus = camera.GetFocus();
+            Actor screen = camera.GetScreen();
 
-            Raylib.DrawLineV(start, end, color);
-        }
-
-        public void Draw(Polygon polygon)
-        {
-            Vector2 center = polygon.GetPosition();
-            int sides = polygon.GetSides();
-            float radius = polygon.GetRadius();
-            float rotation = polygon.GetRotation();
-            Raylib_cs.Color color = GetRaylibColor(polygon.GetColor());
-
-            if (polygon.IsFilled())
+            if (label == focus || label.Overlaps(screen))
             {
-                Raylib.DrawPoly(center, sides, radius, rotation, color);
-            }
-            else
-            {
-                Raylib.DrawPolyLines(center, sides, radius, rotation, color);
+                Raylib_cs.Font font = GetRaylibFont(label.GetFontFile());   
+                string text = label.GetText();
+                Vector2 position = label.GetPosition() - camera.GetPosition();
+                float fontSize = label.GetFontSize();
+                float spacing = 2f;
+                Raylib_cs.Color color = GetRaylibColor(label.GetFontColor());
+                
+                int alignment = label.GetAlignment();
+                Vector2 size = Raylib.MeasureTextEx(font, text, fontSize, spacing);
+                if (alignment == Label.Right) position.X = position.X - size.X;
+                if (alignment == Label.Center) position.X = position.X - (size.X / 2);
+                label.SizeTo(size);
+
+                Raylib.DrawTextEx(font, text, position, fontSize, spacing, color);
             }
         }
 
-        public void Draw(Casting.Rectangle rectangle)
+        public void Draw(List<Actor> actors)
         {
-            int top = (int)rectangle.GetPosition().X;
-            int left = (int)rectangle.GetPosition().Y;
-            int width = (int)rectangle.GetSize().X;
-            int height = (int)rectangle.GetSize().Y;
-            Raylib_cs.Color color = GetRaylibColor(rectangle.GetColor());
-
-            if (rectangle.IsFilled())
+            foreach (Actor actor in actors)
             {
-                Raylib.DrawRectangle(top, left, width, height, color);
+                Draw(actor);
             }
-            else
+        }
+
+        public void Draw(List<Actor> actors, Camera camera)
+        {
+            foreach (Actor actor in actors)
             {
-                Raylib.DrawRectangleLines(top, left, width, height, color);
+                Draw(actor, camera);
+            }
+        }
+
+        public void Draw(List<Casting.Image> images)
+        {
+            foreach (Casting.Image image in images)
+            {
+                Draw(image);
+            }
+        }
+        public void Draw(List<Casting.Image> images, Camera camera)
+        {
+            foreach (Casting.Image image in images)
+            {
+                Draw(image, camera);
+            }
+        }
+
+        public void Draw(List<Label> labels)
+        {
+            foreach (Label label in labels)
+            {
+                Draw(label);
+            }
+        }
+
+        public void Draw(List<Label> labels, Camera camera)
+        {
+            foreach (Label label in labels)
+            {
+                Draw(label, camera);
+            }
+        }
+
+        public void DrawGrid(int cellSize, Casting.Color color)
+        {
+            Raylib_cs.Color raylibColor = GetRaylibColor(color);
+            int width = _settings.GetInt("screenWidth");
+            int height = _settings.GetInt("screenHeight");
+            
+            for (int x = 0; x < width; x += cellSize)
+            {
+                Raylib.DrawLine(x, 0, x, height, raylibColor);
+            }
+            for (int y = 0; y < height; y += cellSize)
+            {
+                Raylib.DrawLine(0, y, width, y, raylibColor);
+            }
+        }
+
+        public void DrawGrid(int cellSize, Casting.Color color, Camera camera)
+        {
+            Vector2 position = camera.GetPosition();
+            Raylib_cs.Color raylibColor = GetRaylibColor(color);
+            int width = (int) camera.GetWorld().GetWidth();
+            int height = (int) camera.GetWorld().GetHeight();
+
+            for (int x = 0; x < width; x += cellSize)
+            {
+                int newX = x - (int)position.X;
+                Raylib.DrawLine(newX, 0, newX, height, raylibColor);
+            }
+            for (int y = 0; y < height; y += cellSize)
+            {
+                int newY = y - (int)position.Y;
+                Raylib.DrawLine(0, newY, width, newY, raylibColor);
             }
         }
 
@@ -158,22 +239,13 @@ namespace Byui.Games.Services
         {
             if (!Raylib.IsWindowReady())
             {
-                string caption = DefaultCaption;
-                int width = DefaultWidth;
-                int height = DefaultHeight;
+                string caption = _settings.GetString("screenCaption");
+                int width = _settings.GetInt("screenWidth");
+                int height = _settings.GetInt("screenHeight");
+                int frameRate = _settings.GetInt("frameRate");
                 
-                if (_settings.Has("screen", "caption")
-                    && _settings.Has("screen", "width")
-                    && _settings.Has("screen", "height"))
-                {
-                    caption = _settings.GetString("screen", "caption");
-                    width = _settings.GetInt("screen", "width");
-                    height = _settings.GetInt("screen", "height");
-                }
-
                 Raylib.InitWindow(width, height, caption);
-                LoadFonts();
-                LoadImages();
+                Raylib.SetTargetFPS(frameRate);
             }
         }
 
@@ -202,73 +274,32 @@ namespace Byui.Games.Services
             _background = GetRaylibColor(color);
         }
 
-        private List<string> GetFilepaths(string directory, string[] searchPatterns)
-        {
-            List<string> filepaths = new List<string>();
-            foreach (string searchPpattern in searchPatterns)
-            {
-                string[] files = Directory.GetFiles(directory, searchPpattern);
-                filepaths.AddRange(files);
-            }
-            return filepaths;
-        }
-
         private Raylib_cs.Color GetRaylibColor(Casting.Color color)
         {
             Tuple<byte, byte, byte, byte> tuple = color.ToTuple();
             return new Raylib_cs.Color(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
         }
 
-        private Raylib_cs.Font GetRaylibFont(string file)
+        private Raylib_cs.Font GetRaylibFont(string posixFilepath)
         {
-            if (!_fonts.ContainsKey(file))
+            Raylib_cs.Font font = Raylib.GetFontDefault();
+            string filepath = posixFilepath.Replace('/', Path.DirectorySeparatorChar);
+            if (filepath != string.Empty && !_fonts.ContainsKey(filepath))
             {
-                throw new ArgumentException($"{file} was not loaded.");
+                _fonts[filepath] = Raylib.LoadFont(filepath);
+                font = _fonts[filepath];
             }
-            return _fonts[file];
+            return font;
         }
 
-        private Raylib_cs.Texture2D GetRaylibTexture(string file)
+        private Raylib_cs.Texture2D GetRaylibTexture(string posixFilepath)
         {
-            if (!_textures.ContainsKey(file))
+            string filepath = posixFilepath.Replace('/', Path.DirectorySeparatorChar);
+            if (!_textures.ContainsKey(filepath))
             {
-                throw new ArgumentException($"{file} was not loaded.");
+                _textures[filepath] = Raylib.LoadTexture(filepath);
             }
-            return _textures[file];
-        }
-
-        private void LoadFonts()
-        {
-            if (_settings.Has("fonts", "filetypes") 
-                && _settings.Has("fonts","directory"))
-            {
-                string filetypes = _settings.GetString("fonts", "filetypes");
-                string directory = _settings.GetString("fonts", "directory");
-                string[] searchPatterns = filetypes.Split(",");
-                List<string> paths = GetFilepaths(directory, searchPatterns);
-                foreach (string path in paths)
-                {
-                    string file = Path.GetFileName(path);
-                    _fonts[file] = Raylib.LoadFont(path);
-                }
-            }
-        }
-
-        private void LoadImages()
-        {
-            if (_settings.Has("images", "filetypes") 
-                && _settings.Has("images","directory"))
-            {
-                string filetypes = _settings.GetString("images", "filetypes");
-                string directory = _settings.GetString("images", "directory");
-                string[] searchPatterns = filetypes.Split(",");
-                List<string> paths = GetFilepaths(directory, searchPatterns);
-                foreach (string path in paths)
-                {
-                    string file = Path.GetFileName(path);
-                    _textures[file] = Raylib.LoadTexture(path);
-                }
-            }
+            return _textures[filepath];
         }
 
         private void UnloadFonts()
