@@ -11,8 +11,7 @@ namespace Example.Images
     /// </summary>
     /// <remarks>
     /// The purpose of this program is to demonstrate how Actors, Actions, Services and a Director 
-    /// work together to draw something on the screen. Methods for drawing images and animations
-    /// are demonstrated in the other examples.
+    /// work together to draw both static and animated images on the screen.
     /// </remarks>
     internal class Program
     {
@@ -22,11 +21,13 @@ namespace Example.Images
             IServiceFactory serviceFactory = new RaylibServiceFactory();
 
             // Instantiate the actors that are the focus of this example.
+            // Create a static robot.
             Image robot1 = new Image();
             robot1.SizeTo(96, 96);
             robot1.MoveTo(176, 192);
             robot1.Display("Assets/robot0.png");
 
+            // Create an animated robot.
             string[] filePaths = new string[6];
             filePaths[0] = "Assets/robot1.png";
             filePaths[1] = "Assets/robot2.png";

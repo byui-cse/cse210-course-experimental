@@ -7,6 +7,9 @@ using Byui.Games.Services;
 
 namespace Example.Images
 {
+    /// <summary>
+    /// Draws the actors on the screen.
+    /// </summary>
     public class DrawImageAction : Byui.Games.Scripting.Action
     {
         private IVideoService _videoService;
@@ -20,12 +23,12 @@ namespace Example.Images
         {
             try
             {
+                // get the actors from the cast
                 List<Image> robots = scene.GetAllActors<Image>("robots");
+
+                // draw the actors on the screen using the video service
                 _videoService.ClearBuffer();
-                foreach (Image robot in robots)
-                {
-                    _videoService.Draw(robot);
-                }
+                _videoService.Draw(robots);
                 _videoService.FlushBuffer();
             }
             catch (Exception exception)
