@@ -11,7 +11,8 @@ namespace Example.Settings
     /// The entry point for the program.
     /// </summary>
     /// <remarks>
-    /// The purpose of this program is to demonstrate how to use a settings file in your game.
+    /// The purpose of this program is to demonstrate how to use a settings file, in combinated with
+    /// Actors, Actions, Services and a Director, in your game.
     /// </remarks>
     internal class Program
     {
@@ -25,12 +26,12 @@ namespace Example.Settings
             
             // Instantiate the actor that is the focus of this example.
             // Note: the actor factory uses a settings service to get robot 
-            // details from a file. 
+            // details from the settings.json file. 
             ActorFactory actorFactory = new ActorFactory(settingsService);
             Image robot = actorFactory.CreateRobot(272, 192);
 
             // Instantiate the action that will do the actual drawing.
-            DrawImageAction drawImageAction = new DrawImageAction(serviceFactory);
+            DrawActorsAction drawImageAction = new DrawActorsAction(serviceFactory);
 
             // Instantiate a new scene and add the actors and actions.
             Scene scene = new Scene();

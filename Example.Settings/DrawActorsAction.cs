@@ -6,11 +6,14 @@ using Byui.Games.Services;
 
 namespace Example.Settings
 {
-    public class DrawImageAction : Byui.Games.Scripting.Action
+    /// <summary>
+    /// Draws the actors on the screen.
+    /// </summary>
+    public class DrawActorsAction : Byui.Games.Scripting.Action
     {
         private IVideoService _videoService;
 
-        public DrawImageAction(IServiceFactory serviceFactory)
+        public DrawActorsAction(IServiceFactory serviceFactory)
         {
             _videoService = serviceFactory.GetVideoService();
         }
@@ -22,13 +25,7 @@ namespace Example.Settings
                 // Get the actor we want to draw from the scene.
                 Image robot = scene.GetFirstActor<Image>("robots");
 
-                /*
-                   Use the video service to draw the actor. Note that we have to clear and flush 
-                   the buffer before and after drawing the actors. 
-                   
-                   In this case, we are using a simple Actor instance. Refer to the other example
-                   projects to learn how to draw images, etc.
-                */
+                // use the video service to draw them on the screen
                 _videoService.ClearBuffer();
                 _videoService.Draw(robot);
                 _videoService.FlushBuffer();
