@@ -24,7 +24,7 @@ namespace Example.Scenes
             // Instantiate the starting scene.
             Scene scene = new Scene();
 
-            // Create the title scene builder to start with.
+            // Create the title scene loader and use it to set the starting scene.
             SceneLoader titleSceneLoader = new TitleSceneLoader(serviceFactory);
             titleSceneLoader.Load(scene);
 
