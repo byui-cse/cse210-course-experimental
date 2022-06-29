@@ -6,6 +6,9 @@ using Byui.Games.Services;
 
 namespace Example.Rotating
 {
+    /// <summary>
+    /// Rotates an actor left or right based on keyboard input.
+    /// </summary>
     public class RotateActorAction : Byui.Games.Scripting.Action
     {
         private IKeyboardService _keyboardService;
@@ -19,7 +22,10 @@ namespace Example.Rotating
         {
             try
             {
+                // get the actor from the cast
                 Actor actor = scene.GetFirstActor("actors");
+
+                // rotate left or right based on key pressed
                 if (_keyboardService.IsKeyDown(KeyboardKey.A))
                 {
                     actor.Rotate(-2);
