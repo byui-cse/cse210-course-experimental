@@ -6,6 +6,9 @@ using Byui.Games.Services;
 
 namespace Example.Scaling
 {
+    /// <summary>
+    /// Draws the actors on the screen.
+    /// </summary>
     public class DrawActorAction : Byui.Games.Scripting.Action
     {
         private IVideoService _videoService;
@@ -19,9 +22,11 @@ namespace Example.Scaling
         {
             try
             {
+                // get the actors from the cast
                 Label label = (Label) scene.GetFirstActor("labels");
                 Actor actor = scene.GetFirstActor("actors");
                 
+                // draw the actors on the screen using the video service
                 _videoService.ClearBuffer();
                 _videoService.Draw(label);
                 _videoService.Draw(actor);

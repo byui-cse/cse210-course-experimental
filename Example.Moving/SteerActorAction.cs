@@ -6,6 +6,11 @@ using Byui.Games.Services;
 
 namespace Example.Scaling
 {
+    /// <summary>
+    /// Steers an actor in a direction corresponding to keyboard input. Note, this does not update 
+    /// the actor's position, just steers it in a certain direction. See MoveActorAction to see how
+    /// the actor's position is actually updated.
+    /// </summary>
     public class SteerActorAction : Byui.Games.Scripting.Action
     {
         private IKeyboardService _keyboardService;
@@ -19,9 +24,11 @@ namespace Example.Scaling
         {
             try
             {
+                // declare direction variables
                 int directionX = 0;
                 int directionY = 0;
 
+                // determine vertical or y-axis direction
                 if (_keyboardService.IsKeyDown(KeyboardKey.W))
                 {
                     directionY = -5;
@@ -31,6 +38,7 @@ namespace Example.Scaling
                     directionY = 5;
                 }
 
+                // determine horizontal or x-axis direction
                 if (_keyboardService.IsKeyDown(KeyboardKey.A))
                 {
                     directionX = -5;
@@ -40,6 +48,7 @@ namespace Example.Scaling
                     directionX = 5;
                 }
 
+                // steer the actor in the desired direction
                 Actor actor = scene.GetFirstActor("actors");
                 actor.Steer(directionX, directionY);
             }
