@@ -250,18 +250,18 @@ namespace Byui.Games.Casting
 
             if (_enabled)
             {
-                float x = region.GetLeft();
-                float y = region.GetTop();
+                float x = this.GetLeft();
+                float y = this.GetTop();
 
                 float maxX = region.GetRight();
                 float maxY = region.GetBottom();
-                float minX = region.GetLeft() - region.GetWidth();
-                float minY = region.GetTop() - region.GetHeight();
+                float minX = region.GetLeft() - this.GetWidth();
+                float minY = region.GetTop() - this.GetHeight();
 
                 if (x < minX) x = maxX;
                 if (x > maxX) x = minX;
                 if (y < minY) y = maxY;
-                if (y < maxY) x = minY;
+                if (y > maxY) y = minY;
 
                 Vector2 newPosition = new Vector2(x, y);
                 MoveTo(newPosition);
