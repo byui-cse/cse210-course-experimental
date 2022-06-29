@@ -7,6 +7,9 @@ using Example.Scenes.Shared;
 
 namespace Example.Scenes.Title
 {
+    /// <summary>
+    /// Loads the actors and actions required for the title scene.
+    /// </summary>
     public class TitleSceneLoader : SceneLoader
     {
         public TitleSceneLoader(IServiceFactory serviceFactory) : base(serviceFactory) { }

@@ -8,6 +8,9 @@ using Example.Scenes.Help;
 
 namespace Example.Scenes.Title
 {
+    /// <summary>
+    /// Loads the next scene when the corresponding key is pressed.
+    /// </summary>
     public class LoadSceneAction : Byui.Games.Scripting.Action
     {
         private IKeyboardService _keyboardService;

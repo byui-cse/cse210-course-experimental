@@ -7,13 +7,16 @@ using Example.Scenes.Shared;
 
 namespace Example.Scenes.Over
 {
+    /// <summary>
+    /// Loads the actors and actions required for the game over scene.
+    /// </summary>
     public class OverSceneLoader : SceneLoader
     {
         public OverSceneLoader(IServiceFactory serviceFactory) : base(serviceFactory) { }
 
         public override void Load(Scene scene)
         {
-            // Set the backgroun color
+            // Set the background color
             GetServiceFactory().GetVideoService().SetBackground(Color.Gray());
 
             // Create the actors that participate in the scene.

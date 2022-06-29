@@ -12,7 +12,7 @@ namespace Example.Scenes
     /// </summary>
     /// <remarks>
     /// The purpose of this program is to demonstrate how Actors, Actions, Services and a Director 
-    /// work together to rotate an actor on the screen.
+    /// work together to create and move through different scenes.
     /// </remarks>
     internal class Program
     {

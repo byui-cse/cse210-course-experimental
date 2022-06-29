@@ -6,10 +6,12 @@ using Example.Scenes;
 using Example.Scenes.Title;
 
 
-
 namespace Example.Scenes.Help
 {
-     public class LoadSceneAction : Byui.Games.Scripting.Action
+    /// <summary>
+    /// Loads the next scene when the corresponding key is pressed.
+    /// </summary>
+    public class LoadSceneAction : Byui.Games.Scripting.Action
     {
         private IKeyboardService _keyboardService;
         private SceneLoader _titleSceneLoader;

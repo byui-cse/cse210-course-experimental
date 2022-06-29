@@ -7,13 +7,16 @@ using Example.Scenes.Shared;
 
 namespace Example.Scenes.Help
 {
+    /// <summary>
+    /// Loads the actors and actions required for the help scene.
+    /// </summary>
     public class HelpSceneLoader : SceneLoader
     {
         public HelpSceneLoader(IServiceFactory serviceFactory) : base(serviceFactory) { }
 
         public override void Load(Scene scene)
         {
-            // Set the backgroun color
+            // Set the background color
             GetServiceFactory().GetVideoService().SetBackground(Color.Purple());
 
             // Create the actors that participate in the scene.

@@ -7,6 +7,9 @@ using Example.Scenes.Over;
 
 namespace Example.Scenes.Game
 {
+    /// <summary>
+    /// Loads the next scene after five seconds have passed.
+    /// </summary>
     public class LoadSceneAction : Byui.Games.Scripting.Action
     {
         private SceneLoader _overSceneLoader;
@@ -23,10 +26,15 @@ namespace Example.Scenes.Game
         {
             try
             {
+                // get the actors from the cast
                 Label instructions = scene.GetFirstActor<Label>("instructions");
+
+                // update the instructions with the time remaining
                 int remainingSeconds = 5 - _stopwatch.Elapsed.Seconds;
-                instructions.Display($"game over in {remainingSeconds} seconds");
+                string newInstructions = $"game over in {remainingSeconds} seconds";
+                instructions.Display(newInstructions);
                 
+                // load the next scene if five seconds have elapsed
                 if (_stopwatch.Elapsed.Seconds >= 5)
                 {
                     _stopwatch.Stop();

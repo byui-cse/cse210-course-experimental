@@ -9,6 +9,9 @@ using Example.Scenes.Title;
 
 namespace Example.Scenes.Over
 {
+    /// <summary>
+    /// Loads the next scene when the corresponding key is pressed.
+    /// </summary>
     public class LoadSceneAction : Byui.Games.Scripting.Action
     {
         private IKeyboardService _keyboardService;

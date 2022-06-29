@@ -7,9 +7,11 @@ using Example.Scenes.Shared;
 
 namespace Example.Scenes.Game
 {
+    /// <summary>
+    /// Loads the actors and actions required for the game scene.
+    /// </summary>
     public class GameSceneLoader : SceneLoader
     {
-
         public GameSceneLoader(IServiceFactory serviceFactory) : base(serviceFactory) { }
 
         public override void Load(Scene scene)
