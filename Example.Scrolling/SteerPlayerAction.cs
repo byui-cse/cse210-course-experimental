@@ -6,10 +6,13 @@ using Byui.Games.Services;
 
 namespace Example.Scrolling
 {
+    /// <summary>
+    /// Steers the player left, right, up or down based on keyboard input.
+    /// </summary>
     public class SteerPlayerAction : Byui.Games.Scripting.Action
     {
         private IKeyboardService _keyboardService;
-
+        
         public SteerPlayerAction(IServiceFactory serviceFactory)
         {
             _keyboardService = serviceFactory.GetKeyboardService();
@@ -19,27 +22,32 @@ namespace Example.Scrolling
         {
             try
             {
+                // declare basic speed and direction variables
+                int playerSpeed = 5;
                 int directionX = 0;
                 int directionY = 0;
 
+                // detect vertical or y-axis direction
                 if (_keyboardService.IsKeyDown(KeyboardKey.W))
                 {
-                    directionY = -5;
+                    directionY = -playerSpeed;
                 }
                 else if (_keyboardService.IsKeyDown(KeyboardKey.S))
                 {
-                    directionY = 5;
+                    directionY = playerSpeed;
                 }
 
+                // detect horizontal or x-axis direction
                 if (_keyboardService.IsKeyDown(KeyboardKey.A))
                 {
-                    directionX = -5;
+                    directionX = -playerSpeed;
                 }
                 else if (_keyboardService.IsKeyDown(KeyboardKey.D))
                 {
-                    directionX = 5;
+                    directionX = playerSpeed;
                 }
 
+                // steer the player in the desired direction
                 Actor player = scene.GetFirstActor("player");
                 player.Steer(directionX, directionY);
             }

@@ -11,7 +11,7 @@ namespace Example.Scrolling
     /// </summary>
     /// <remarks>
     /// The purpose of this program is to demonstrate how Actors, Actions, Services and a Director 
-    /// work together to rotate an actor on the screen.
+    /// work together to scroll a world while the player moves.
     /// </remarks>
     internal class Program
     {
