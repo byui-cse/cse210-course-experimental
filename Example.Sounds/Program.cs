@@ -12,7 +12,7 @@ namespace Example.Sounds
     /// </summary>
     /// <remarks>
     /// The purpose of this program is to demonstrate how Actors, Actions, Services and a Director 
-    /// work together to rotate an actor on the screen.
+    /// work together to play short and long sounds in a game.
     /// </remarks>
     internal class Program
     {

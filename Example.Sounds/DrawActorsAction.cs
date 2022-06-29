@@ -6,6 +6,9 @@ using Byui.Games.Services;
 
 namespace Example.Sounds
 {
+    /// <summary>
+    /// Draws the actors on the screen.
+    /// </summary>
     public class DrawActorsAction : Byui.Games.Scripting.Action
     {
         private IVideoService _videoService;
@@ -19,10 +22,12 @@ namespace Example.Sounds
         {
             try
             {
-                Actor actor = scene.GetFirstActor("actors");
-                
+                // get all the actors in the 'actors' group 
+                List<Actor> actors = scene.GetAllActors("actors");
+
+                // use the video service to draw them on the screen
                 _videoService.ClearBuffer();
-                _videoService.Draw(actor);
+                _videoService.Draw(actors);
                 _videoService.FlushBuffer();
             }
             catch (Exception exception)

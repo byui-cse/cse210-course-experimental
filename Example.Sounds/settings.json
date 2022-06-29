@@ -2,5 +2,7 @@
   "frameRate": 60,
   "screenCaption": "CSE210 Sounds Example",
   "screenWidth": 640,
-  "screenHeight": 480
+  "screenHeight": 480,
+  "backgroundMusic": "Assets/spinning-monkeys.mp3",
+  "bounceSound": "Assets/bounce.wav"
 }
