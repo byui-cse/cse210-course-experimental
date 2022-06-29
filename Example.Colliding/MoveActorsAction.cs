@@ -6,6 +6,9 @@ using Byui.Games.Services;
 
 namespace Example.Colliding
 {
+    /// <summary>
+    /// Moves the actors and bounces them within the boundaries of the screen.
+    /// </summary>
     public class MoveActorsAction : Byui.Games.Scripting.Action
     {
         private IKeyboardService _keyboardService;
@@ -19,10 +22,12 @@ namespace Example.Colliding
         {
             try
             {
+                // get the actors from the cast
                 Actor screen = scene.GetFirstActor("screen");
                 Actor actor1 = scene.GetFirstActor("actor1");
                 Actor actor2 = scene.GetFirstActor("actor2");
                 
+                // move them while bouncing within the screen
                 actor1.Move();
                 actor1.BounceIn(screen);
 
