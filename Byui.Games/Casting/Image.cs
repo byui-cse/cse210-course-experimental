@@ -26,9 +26,14 @@ namespace Byui.Games.Casting
 
         public virtual void Animate(string[] files, float duration, int frameRate, bool repeated)
         {
-            _files = files;
-            _keyFrame = (int) (duration * frameRate) / files.Length;
-            _repeated = repeated;
+            if (!AreEqual(_files, files))
+            {
+                _files = files;
+                _keyFrame = (int)(duration * frameRate) / files.Length;
+                _repeated = repeated;
+                _frame = 0;
+                _index = 0;
+            }
         }
 
         public void Display(string file)
@@ -52,6 +57,24 @@ namespace Byui.Games.Casting
                 }
             }
             return _files[_index].Trim();
+        }
+
+        private bool AreEqual(string[] first, string[] second)
+        {
+            if (first.Length != second.Length)
+            {
+                return false;
+            }
+                
+            for (int i = 0; i < first.Length; i++)
+            {
+                if (first[i] != second[i])
+                {
+                    return false;
+                }        
+            }
+
+            return true;
         }
 
     }

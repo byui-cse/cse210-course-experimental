@@ -36,9 +36,9 @@ namespace Byui.Games.Directing
         }
 
         public void OnStop()
-        {
-            _audioService.Release();
+        {   _audioService.Release();
             _videoService.Release();
+            System.Console.Out.WriteLine($"STOP");
         }
 
         public void Direct(Scene scene)

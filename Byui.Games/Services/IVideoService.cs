@@ -11,8 +11,8 @@ namespace Byui.Games.Services
         void Draw(Actor actor, Camera camera);
         void Draw(Image image);
         void Draw(Image image, Camera camera);
-        void Draw(Label actor);
-        void Draw(Label actor, Camera camera);
+        void Draw(Label label);
+        void Draw(Label label, Camera camera);
         void Draw(List<Actor> actors);
         void Draw(List<Actor> actors, Camera camera);
         void Draw(List<Image> images);

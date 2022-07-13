@@ -195,7 +195,7 @@ namespace Byui.Games.Casting
         public virtual bool Overlaps(Vector2 point)
         {
             return (this.GetLeft() <= point.X && this.GetRight() >= point.X
-                && this.GetTop() >= point.Y && this.GetBottom() <= point.Y);
+                && this.GetTop() <= point.Y && this.GetBottom() >= point.Y);
         }
 
         public virtual void Rotate(float degrees)
