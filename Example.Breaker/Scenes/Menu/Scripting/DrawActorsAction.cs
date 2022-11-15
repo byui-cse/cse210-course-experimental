@@ -21,7 +21,7 @@ namespace Example.Breaker.Menu
             try
             {
                 List<Image> images = scene.GetAllActors<Image>("images");
-                List<Label> labels = scene.GetAllActors<Image>("labels");
+                List<Label> labels = scene.GetAllActors<Label>("labels");
                 
                 _videoService.ClearBuffer();
                 _videoService.Draw(images);

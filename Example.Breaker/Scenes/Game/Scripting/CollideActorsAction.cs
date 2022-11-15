@@ -24,8 +24,6 @@ namespace Example.Breaker.Game
             {
                 DoBallPaddleCollision(scene);
                 DoBallBottomCollision(scene);
-                DoSpecialPaddleCollision(scene);
-                DoSpecialBottomCollision(scene);
             }
             catch (Exception exception)
             {
@@ -75,34 +73,34 @@ namespace Example.Breaker.Game
             }
         }
 
-        private void DoSpecialPaddleCollision(Scene scene)
-        {
-            Paddle paddle = scene.GetFirstActor<Paddle>("paddle");
-            List<Special> specials = scene.GetAllActors<Special>("specials");
+        // private void DoSpecialPaddleCollision(Scene scene)
+        // {
+        //     Paddle paddle = scene.GetFirstActor<Paddle>("paddle");
+        //     List<Special> specials = scene.GetAllActors<Special>("specials");
             
-            foreach(Special special in specials)
-            {
-                if (paddle.Overlaps(special))
-                {
-                    Action effect = special.GetEffect();
-                    effect.Execute(scene, 0f, null);
-                    scene.RemoveActor("specials", special);
-                }
-            }
-        }
+        //     foreach(Special special in specials)
+        //     {
+        //         if (paddle.Overlaps(special))
+        //         {
+        //             Action effect = special.GetEffect();
+        //             effect.Execute(scene, 0f, null);
+        //             scene.RemoveActor("specials", special);
+        //         }
+        //     }
+        // }
 
-        private void DoSpecialBottomCollision(Scene scene)
-        {
-            Actor field = scene.GetFirstActor("field");
-            List<Special> specials = scene.GetAllActors<Special>("specials");
-            foreach(Special special in specials)
-            {
-                if (special.GetBottom() >= field.GetBottom())
-                {
-                    scene.RemoveActor("specials", special);
-                }
-            }
-        }
+        // private void DoSpecialBottomCollision(Scene scene)
+        // {
+        //     Actor field = scene.GetFirstActor("field");
+        //     List<Special> specials = scene.GetAllActors<Special>("specials");
+        //     foreach(Special special in specials)
+        //     {
+        //         if (special.GetBottom() >= field.GetBottom())
+        //         {
+        //             scene.RemoveActor("specials", special);
+        //         }
+        //     }
+        // }
 
         
     }

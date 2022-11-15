@@ -86,11 +86,6 @@ namespace Example.Breaker.Game
             return paddle;
         }
 
-        public PowerUp CreatePowerUp()
-        {
-            
-        }
-
         public Score CreateScore()
         {
             int x = (int) _settingsService.GetFloat("screenWidth") / 2;
